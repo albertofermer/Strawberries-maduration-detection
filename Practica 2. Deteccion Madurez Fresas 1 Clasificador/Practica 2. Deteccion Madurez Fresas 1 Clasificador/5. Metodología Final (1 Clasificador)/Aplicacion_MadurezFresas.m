@@ -76,11 +76,13 @@ for i = 1:numImagenes
         % agrupacion_minima_normalizada
         area_minima = round( agrupacion_minima_normalizada * M * N);
         Img_Binaria = bwareaopen(KNNrgb,area_minima);
-
+        %% 2.6.2 Eliminamos las agrupaciones que no son consideradas fresas.
     % Etiqueto las agrupaciones que contengan pixeles rojos o verdes.
     [Ietiq,numAgrupaciones] = bwlabel(Img_Binaria);
+        %Sacamos las contribuciones rojas de la imagen
         Img_roja = KNNrgb == 255;
         Img_roja = bwareaopen(Img_roja,area_minima);
+        % Sacamos las contribuciones verdes de la imagen
         Img_verde = KNNrgb == 128;
         Img_verde = bwareaopen(Img_verde,area_minima);
     Iacum = zeros(size(Ietiq));
@@ -88,27 +90,38 @@ for i = 1:numImagenes
     for agrupacion=1:numAgrupaciones
         Ibaux = (Ietiq == agrupacion) .* Img_roja;
         pixeles_rojos = sum(sum(Ibaux));
-        if ( pixeles_rojos ~= 0 ) % Si la suma es distinta de 0, es una fresa
+        % Si la suma es distinta de 0, es una fresa
+        if ( pixeles_rojos ~= 0 ) 
+            % En Iacum se encontrarán todas las fresas de la imagen.
             Iacum = Iacum + (Ietiq == agrupacion);
         end
     end
     
+    % Visualiza la imagen completa con todas las fresas detectadas
+        funcion_visualizaColores(I_original, ...
+    (Iacum == Img_roja & Iacum ~= 0)*255 + ...
+    (Iacum == Img_verde & Iacum ~= 0)*128, true);
     [Ietiq,numAgrupaciones] = bwlabel(Iacum);
 
+    %% 2.7 Visualizamos el resultado
+    % Mostramos una imagen por cada fresa detectada junto a su grado de
+    % madurez.
     for agrupacion=1:numAgrupaciones
 
+        % Añadimos la codificación del color a las agrupaciones.
         Icodif = (Ietiq == agrupacion) .* ((Img_roja*255) + (Img_verde*128));
-        Img_color = funcion_visualizaColores(I_original, ...
+        
+        % Visualizamos la imagen
+        funcion_visualizaColores(I_original, ...
             Icodif, true);
         
+        % Calculamos el grado de madurez
         num_pix_amarillos = sum((Icodif == 128),'all');
         num_pix_rojos = sum((Icodif == 255),'all');
-        
         madurez = num_pix_rojos/(num_pix_amarillos + num_pix_rojos) * 100;
 
+        % Mostramos la madurez como título de la imagen
         title(['Madurez: ', num2str(madurez), '%' ]);
-
-
     end 
 
     pause;
