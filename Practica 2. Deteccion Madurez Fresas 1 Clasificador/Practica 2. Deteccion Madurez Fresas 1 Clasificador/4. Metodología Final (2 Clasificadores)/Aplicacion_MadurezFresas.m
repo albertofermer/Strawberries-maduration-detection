@@ -89,31 +89,39 @@ for i = 1:numImagenes
     for agrupacion=1:numAgrupaciones
         Ibaux = (Ietiq == agrupacion) .* Img_Binaria_Rojo;
         pixeles_rojos = sum(sum(Ibaux));
-        if ( pixeles_rojos ~= 0 ) % Si la suma es distinta de 0, es una fresa
+        % Si la suma es distinta de 0, es una fresa
+        if ( pixeles_rojos ~= 0 ) 
             Iacum = Iacum + (Ietiq == agrupacion);
         end
     end
+
+    % Visualizamos la imagen con todas las fresas detectadas
     funcion_visualizaColores(I_original, ...
     (Iacum == Img_Binaria_Rojo & Iacum ~= 0)*255 + ...
     (Iacum == Img_Binaria_Verde & Iacum ~= 0)*128, true);
     
     [Ietiq,numAgrupaciones] = bwlabel(Iacum);
-
+    % Mostramos una imagen por cada fresa detectada junto a su grado de
+    % madurez.
     for agrupacion=1:numAgrupaciones
 
-        Icodif = (Ietiq == agrupacion) .* ((Img_Binaria_Rojo*255) + (Img_Binaria_Verde*128));
-        Img_color = funcion_visualizaColores(I_original, ...
+        % Añadimos la codificación del color a las agrupaciones.
+        Icodif = (Ietiq == agrupacion) .* ((Img_Binaria_Rojo*255) + ...
+            (Img_Binaria_Verde*128));
+        
+        % Visualizamos la imagen
+        funcion_visualizaColores(I_original, ...
             Icodif, true);
         
+        % Calculamos el grado de madurez
         num_pix_amarillos = sum((Icodif == 128),'all');
         num_pix_rojos = sum((Icodif == 255),'all');
-        
         madurez = num_pix_rojos/(num_pix_amarillos + num_pix_rojos) * 100;
 
+        % Mostramos la madurez como título de la imagen
         title(['Madurez: ', num2str(madurez), '%' ]);
-
-
     end 
+
 
     pause;
     close all
