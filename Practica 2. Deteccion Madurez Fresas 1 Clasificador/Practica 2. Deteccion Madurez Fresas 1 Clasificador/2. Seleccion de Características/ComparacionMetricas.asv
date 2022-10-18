@@ -1,0 +1,59 @@
+load('./Variables Generadas/metricasKNN.mat')
+load('./Variables Generadas/metricasSVM.mat')
+load('./Variables Generadas/metricasNN.mat')
+load('./Variables Generadas/metricasMahalanobis.mat')
+
+% El orden de las filas de cada matriz de métricas es: RGB, Lab, RSL y
+% HSIUAb
+
+%% Métrica: Sensibilidad
+DatosSensibilidad = [metricas_media_Mahalanobis(:,1)';
+                     metricas_media_KNN(:,1)';
+                     metricas_media_NN(:,1)';
+                     metricas_media_SVM(:,1)'];
+%% Métrica: Especificidad
+
+%% Métrica: Aciertos
+
+%% Métrica: Falsos Positivos
+
+
+%% Modelo de color RGB
+DatosModelosRGB = [metricas_media_Mahalanobis(1,:);
+                   metricas_media_KNN(1,:);
+                   metricas_media_NN(1,:);
+                   metricas_media_SVM(1,:)];
+
+Tabla_RGB = array2table(DatosModelosRGB,"VariableNames", ...
+    ["Sensibilidad","Especificidad","Aciertos","Falsos Positivos"], ...
+    "RowNames",["Mahalanobis","KNN","NN","SVM"]);
+
+%% Modelo de Color Lab
+DatosModelosLab = [metricas_media_Mahalanobis(2,:);
+                   metricas_media_KNN(2,:);
+                   metricas_media_NN(2,:);
+                   metricas_media_SVM(2,:)];
+
+Tabla_Lab = array2table(DatosModelosLab,"VariableNames", ...
+    ["Sensibilidad","Especificidad","Aciertos","Falsos Positivos"], ...
+    "RowNames",["Mahalanobis","KNN","NN","SVM"]);
+
+%% Modelo de color RSL
+DatosModelosRSL = [metricas_media_Mahalanobis(3,:);
+                   metricas_media_KNN(3,:);
+                   metricas_media_NN(3,:);
+                   metricas_media_SVM(3,:)];
+
+Tabla_RSL = array2table(DatosModelosRSL,"VariableNames", ...
+    ["Sensibilidad","Especificidad","Aciertos","Falsos Positivos"], ...
+    "RowNames",["Mahalanobis","KNN","NN","SVM"]);
+
+%% Modelo de color HSIUab
+DatosModelosHSIUab = [metricas_media_Mahalanobis(4,:);
+                   metricas_media_KNN(4,:);
+                   metricas_media_NN(4,:);
+                   metricas_media_SVM(4,:)];
+
+Tabla_HSIUab = array2table(DatosModelosHSIUab,"VariableNames", ...
+    ["Sensibilidad","Especificidad","Aciertos","Falsos Positivos"], ...
+    "RowNames",["Mahalanobis","KNN","NN","SVM"]);

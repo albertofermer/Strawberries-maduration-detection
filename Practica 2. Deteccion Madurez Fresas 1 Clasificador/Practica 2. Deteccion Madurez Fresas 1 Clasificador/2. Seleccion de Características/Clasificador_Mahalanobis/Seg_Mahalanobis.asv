@@ -1,0 +1,136 @@
+% Cargamos los datos obtenidos en la etapa anterior
+load('../Variables Necesarias/ValoresColores.mat')
+load('../Variables Generadas/espacioccasYseparabilidad.mat')
+load('../Variables Generadas/variablesGeneradas.mat')
+
+addpath('../Funciones Necesarias/')
+%% RGB
+% Etapa de Eliminación de Outliers (Los que tengan en la componente roja un
+% valor menor al 0.95)
+
+XoI_RGB = ValoresColores(:,1:3);
+YoI_RGB = CodifValoresColores;
+
+XoI_RGB(CodifValoresColores == 255 & ValoresColores(:,1) < 0.95,:) = [];
+YoI_RGB(CodifValoresColores == 255 & ValoresColores(:,1) < 0.95,:) = [];
+
+datosMahalanobis = calcula_datos_distancias(XoI_RGB(YoI_RGB == 255,1:3),XoI_RGB(YoI_RGB ~= 255,1:3));
+% Calculamos el centroide de la nube de puntos
+centroide_RGB = datosMahalanobis(1:3);
+% Calculamos la matriz de covarianza de la nube de puntos.
+mcov_RGB = cov(XoI_RGB(YoI_RGB == 255,:));
+
+% Creamos la meshgrid para representar la superficie.
+[X1,X2,X3] = meshgrid(0:1/40:1); 
+Valores = [X1(:) X2(:) X3(:)]; 
+
+[NumValores temp] = size(Valores); 
+distancia = [];
+% Calculamos la distancia de mahalanobis para cada punto de los datos.
+for j=1:NumValores
+    X = Valores(j,:); 
+    distancia(j,1)=sqrt((X-centroide_RGB)*pinv(mcov_RGB)*(X-centroide_RGB)');
+end
+
+[max_distancia,pos] = max(distancia);
+PosicionesInteres = distancia < datosMahalanobis(4); 
+datosMahal = Valores(PosicionesInteres,:);
+
+% REPRESENTAMOS
+x = datosMahal(:,1); 
+y = datosMahal(:,2); 
+z = datosMahal(:,3);
+figure, plot3(x, y, z, '+g'), hold on, grid on
+
+R = XoI_RGB(:,1);
+G = XoI_RGB(:,2);
+B = XoI_RGB(:,3);
+
+plot3(R(YoI_RGB == 255,:),G(YoI_RGB == 255,:),B(YoI_RGB == 255,:),'.r'), hold on
+plot3(R(YoI_RGB ~= 255,:),G(YoI_RGB ~= 255,:),B(YoI_RGB ~= 255,:),'.b'), hold on
+
+%%Lab
+XoI_RGB = ValoresColores(:,10:12);
+YoI_RGB = CodifValoresColores;
+
+datosMahalanobis = [datosMahalanobis;calcula_datos_distancias(XoI_RGB(YoI_RGB == 255,:),XoI_RGB(YoI_RGB ~= 255,:))];
+% Calculamos el centroide de la nube de puntos
+centroide_RGB = datosMahalanobis(2,1:3);
+% Calculamos la matriz de covarianza de la nube de puntos.
+mcov_RGB = cov(XoI_RGB(YoI_RGB == 255,:));
+
+% Creamos la meshgrid para representar la superficie.
+[X1,X2,X3] = meshgrid(0:1/40:1); 
+Valores = [X1(:) X2(:) X3(:)]; 
+
+[NumValores temp] = size(Valores); 
+distancia = [];
+% Calculamos la distancia de mahalanobis para cada punto de los datos.
+for j=1:NumValores
+    X = Valores(j,:); 
+    distancia(j,1)=sqrt((X-centroide_RGB)*pinv(mcov_RGB)*(X-centroide_RGB)');
+end
+
+[max_distancia,pos] = max(distancia);
+PosicionesInteres = distancia < datosMahalanobis(2,6); 
+datosMahal = Valores(PosicionesInteres,:);
+
+% REPRESENTAMOS
+x = datosMahal(:,1); 
+y = datosMahal(:,2); 
+z = datosMahal(:,3);
+figure, plot3(x, y, z, '+g'), hold on, grid on
+
+R = XoI_RGB(:,1);
+G = XoI_RGB(:,2);
+B = XoI_RGB(:,3);
+
+plot3(R(YoI_RGB == 255,:),G(YoI_RGB == 255,:),B(YoI_RGB == 255,:),'.r'), hold on
+plot3(R(YoI_RGB ~= 255,:),G(YoI_RGB ~= 255,:),B(YoI_RGB ~= 255,:),'.b'), hold on
+
+%% RSL
+% Etapa de Eliminación de Outliers (Los que tengan en la componente roja un
+% valor menor al 0.95)
+
+XoI_RGB = ValoresColores(:,[1]);
+YoI_RGB = CodifValoresColores;
+
+XoI_RGB(CodifValoresColores == 255 & ValoresColores(:,1) < 0.95,:) = [];
+YoI_RGB(CodifValoresColores == 255 & ValoresColores(:,1) < 0.95,:) = [];
+
+datosMahalanobis = calcula_datos_distancias(XoI_RGB(YoI_RGB == 255,1:3),XoI_RGB(YoI_RGB ~= 255,1:3));
+% Calculamos el centroide de la nube de puntos
+centroide_RGB = datosMahalanobis(1:3);
+% Calculamos la matriz de covarianza de la nube de puntos.
+mcov_RGB = cov(XoI_RGB(YoI_RGB == 255,:));
+
+% Creamos la meshgrid para representar la superficie.
+[X1,X2,X3] = meshgrid(0:1/40:1); 
+Valores = [X1(:) X2(:) X3(:)]; 
+
+[NumValores temp] = size(Valores); 
+distancia = [];
+% Calculamos la distancia de mahalanobis para cada punto de los datos.
+for j=1:NumValores
+    X = Valores(j,:); 
+    distancia(j,1)=sqrt((X-centroide_RGB)*pinv(mcov_RGB)*(X-centroide_RGB)');
+end
+
+[max_distancia,pos] = max(distancia);
+PosicionesInteres = distancia < datosMahalanobis(4); 
+datosMahal = Valores(PosicionesInteres,:);
+
+% REPRESENTAMOS
+x = datosMahal(:,1); 
+y = datosMahal(:,2); 
+z = datosMahal(:,3);
+figure, plot3(x, y, z, '+g'), hold on, grid on
+
+R = XoI_RGB(:,1);
+G = XoI_RGB(:,2);
+B = XoI_RGB(:,3);
+
+plot3(R(YoI_RGB == 255,:),G(YoI_RGB == 255,:),B(YoI_RGB == 255,:),'.r'), hold on
+plot3(R(YoI_RGB ~= 255,:),G(YoI_RGB ~= 255,:),B(YoI_RGB ~= 255,:),'.b'), hold on
+
+
